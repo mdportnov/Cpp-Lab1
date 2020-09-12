@@ -7,7 +7,7 @@ namespace lab1 {
         int sum = 0;
         if (n < 0) n = -n;
         if (n / 10 == 0)
-            return 1;
+            return n;
         else {
             while (n > 0) {
                 sum += n % 10;
@@ -18,34 +18,36 @@ namespace lab1 {
     }
 
     Matrix input() {
-        int rows, columns;
-
+        int rows, cols;
         std::cout << "Input number of columns (x):";
-        getNaturalInt(&columns);
+        getNaturalInt(&cols);
+
         std::cout << "Input number of rows (y):";
         getNaturalInt(&rows);
 
-        Matrix matrix = Matrix(columns, rows);
+        Matrix matrix = Matrix(rows, cols);
 
         char choice;
         bool run = true;
         while (run) {
             std::cout << "Do you want to type in the next item? [Y/n]\n";
             std::cin >> choice;
-            while (choice != 'n' && choice != 'y') {
-                choice = tolower(choice);
 
+            choice = tolower(choice);
+
+            if (choice == 'y') {
                 int x, y, value;
 
-                std::cout << "Type in X coord: [" << 0 << ";" << columns - 1 << "]\n";
-                getNaturalIntWithUpperBound(&x, &columns);
+                std::cout << "Type in X coord: [" << 0 << ";" << cols - 1 << "]\n";
+                getNaturalInt(&x, &cols, true);
                 std::cout << "Type in Y coord: [" << 0 << ";" << rows - 1 << "]\n";
-                getNaturalIntWithUpperBound(&y, &rows);
+                getNaturalInt(&y, &rows, true);
                 std::cout << "Type in Value:\n";
-                getNaturalInt(&value);
+                getInt(&value);
 
                 printf("\nAdding element | x: %d | y: %d | value: %d\n", x, y, value);
                 matrix.addElement(x, y, value);
+
             }
 
             if (choice == 'n') {
@@ -56,7 +58,28 @@ namespace lab1 {
         return matrix;
     }
 
-    int getNaturalIntWithUpperBound(int *a, const int *upperBound) {
+    int getNaturalInt(int *a, const int *upperBound) {
+        int n;
+        do {
+            n = scanf("%d", a);
+            if (n < 0)
+                return 0;
+
+            if (*a > *upperBound - 1) {
+                printf("%s\n", "Error! You went beyond the boundaries. Please, repeat your input: ");
+                scanf("%*[^\n]");
+            }
+
+            if (n == 0 || *a <= 0) {
+                printf("%s\n", "Error! Wrong type. Please, repeat your input: ");
+                scanf("%*[^\n]");
+            }
+
+        } while (n == 0 || *a < 0 || *a > *upperBound - 1);
+        return 1;
+    }
+
+    int getNaturalInt(int *a, const int *upperBound, bool withZero) {
         int n;
         do {
             n = scanf("%d", a);
@@ -73,6 +96,7 @@ namespace lab1 {
                 scanf("%*[^\n]");
             }
 
+
         } while (n == 0 || *a < 0 || *a > *upperBound - 1);
         return 1;
     }
@@ -83,11 +107,25 @@ namespace lab1 {
             n = scanf("%d", a);
             if (n < 0)
                 return 0;
-            if (n == 0 || *a < 0) {
+            if (n == 0 || *a <= 0) {
                 printf("%s\n", "\nError! Wrong type. Please, repeat your input: ");
                 scanf("%*[^\n]");
             }
-        } while (n == 0 || *a < 0);
+        } while (n == 0 || *a <= 0);
+        return 1;
+    }
+
+    int getInt(int *a) {
+        int n;
+        do {
+            n = scanf("%d", a);
+            if (n < 0)
+                return 0;
+            if (n == 0) {
+                printf("%s\n", "\nError! Wrong type. Please, repeat your input: ");
+                scanf("%*[^\n]");
+            }
+        } while (n == 0);
         return 1;
     }
 
@@ -105,53 +143,52 @@ namespace lab1 {
         count = 0;
     }
 
-    void Matrix::addElement(int x, int y, int value) {
-        RowElement *current, *tmp, *prev;
+    void Matrix::addElement(int i, int j, int v) {
+        ListElement *current, *help, *prev;
         bool insert = false;
-        printf("Cols: %d | Rows: %d\n", columns, rows);
-
-        if (x < columns && y < rows) {
-            // check to see if it can be the first element
-            if (head == nullptr || y < head->el.y
-                || (y == head->el.y && x < head->el.x)) {
-
-                tmp = new RowElement(x, y, value);
-                tmp->next = head;
-                head = tmp;
+        // проверка корректности позиции
+        // вставляемого элемента
+        if (i < rows && j < columns) {
+            // проверка, вставляется ли элемент
+            // на первое место
+            if (head == nullptr || j < head->el.y ||
+                (j == head->el.y && i < head->el.x)) {
+                // вставка элемента в начало списка
+                help = new ListElement(i, j, v);
+                help->next = head;
+                head = help;
                 count++;
                 return;
-            } // else:
-            // insert position search
+            }
+            // поиск позиции вставляемого элемента
             prev = head;
             current = head->next;
 
-            //  skip elements with rows with less number
-            while (current != nullptr && x > current->el.x) {
-                current = current->next;
+            // пропускаем элементы, находящиеся в СТРОКАХ с меньшим номером
+            while (current != nullptr && j > current->el.y) {
+                current = current->next;//////
                 prev = prev->next;
             }
 
-            if (current != nullptr && x == current->el.x) {
-                // skip elements in current row with less number of column
-                while (current != nullptr && y > current->el.y) {
+            if (current != nullptr && j == current->el.y) {
+                // пропускаем элементы, находящиеся в той же СТРОКЕ, но в СТОЛБЦАХ с меньшим номером
+                while (current != nullptr && i > current->el.x) {
                     current = current->next;
                     prev = prev->next;
                 }
-
-                if (current != nullptr && y == current->el.y) {
-                    current->el.value = value;
+                // если элемент в заданной позиции уже имеется,изменяем его значение
+                if (current != nullptr && i == current->el.x) {
+                    current->el.value = v;
                     insert = true;
                 }
             }
-
+            // вставляем новый элемент в список
             if (!insert) {
-                tmp = new RowElement(x, y, value);
-                prev->next = tmp;
-                tmp->next = current;
+                help = new ListElement(i, j, v);
+                prev->next = help;
+                help->next = current;
                 count++;
             }
-        } else {
-            throw WrongIndexException(x, y);
         }
     }
 
@@ -160,91 +197,93 @@ namespace lab1 {
         return out;
     }
 
-    std::ostream &operator<<(std::ostream &out, RowElement &rowElement) {
+    std::ostream &operator<<(std::ostream &out, ListElement &rowElement) {
         out << rowElement.el;
         return out;
     }
 
     std::ostream &operator<<(std::ostream &out, Matrix &matrix) {
-        int y = 0, x = 0;
-
-        RowElement *curr = matrix.head;
-
-        while (curr != nullptr) {
-            for (; x < curr->el.x; x++) {
-                for (; y < matrix.rows; x++)
+        int i = 0, j = 0;
+        // цикл просмотра элементов списка
+        ListElement *current = matrix.head;
+        while (current != nullptr) {
+            // вывод нулей в качестве элементов предшествующих строк
+            for (; i < current->el.x; i++) {
+                for (; j < matrix.columns; j++)
                     out << "0\t";
                 out << std::endl;
-                y = 0;
+                j = 0;
             }
-
-            for (; y < curr->el.y; y++)
+            // вывод нулей в качестве элементов в той же строке, но в предшествующих столбцах
+            for (; i < current->el.x; i++) ////!!!
                 out << "0\t";
-            out << *curr << "\t";
+            // вывод текущего элемента
+            out << *current << "\t";
+            // корректировка индексов для просмотра следующих элементов
+            i++; ////!!!
 
-            y++;
-            if (y == matrix.rows) {
-                x++;
-                y = 0;
+            if (i == matrix.rows) {
+                j++;
+                i = 0;
                 out << std::endl;
             }
-            curr = curr->next;
+            current = current->next;
         }
-
-        if (y != 0) {
-            for (; y < matrix.rows; y++)
+        // вывод нулей в качестве последующих элементов строки, в которой расположен последний элемент списка
+        if (j != 0) {
+            for (; j < matrix.columns; j++)
                 out << "0\t";
             out << std::endl;
-            x++;
+            j++;
         }
-
-        for (; x < matrix.columns; x++) {
-            for (y = 0; y < matrix.rows; y++)
+        // вывод нулей в качестве элементов строк, расположенных после той, в которой находится последний элемент списка
+        for (; j < matrix.columns; j++) {
+            for (i = 0; i < matrix.rows; i++)
                 out << "0\t";
             out << std::endl;
         }
-
         return out;
     }
 
     void Matrix::createVector() {
-
-        RowElement *curr = this->head;
+        ListElement *curr = this->head;
         int currentSum = 0, currentDigitSum = 0;
-        int y = 0;
+        int x = 0;
 
         std::vector<int> vector;
+        bool isFirst = true;
 
         while (curr != nullptr) {
-            currentDigitSum = sumOfDigits(curr->el.value);
-            printf("Current Digit Sum: %d\n", currentDigitSum);
 
-            printf("Curr y: %d\n", curr->el.y);
-//            printf("Curr x: %d\n", curr->el.x);
-            if (curr->el.y == y) {
-                if (sumOfDigits(curr->el.value) == currentDigitSum) {
-                    currentSum += curr->el.value;
-                } else {
-//                    curr = curr->next;
-                }
-            } else {
-                y++;
-                vector.push_back(currentSum);
-
+            if (isFirst) {
+                currentDigitSum = sumOfDigits(curr->el.value);
+                isFirst = false;
             }
 
-            currentSum = 0;
+            if (curr->el.y == x) {
+                if (currentDigitSum == sumOfDigits(curr->el.value)) {
+                    currentSum += curr->el.value;
+                }
+            }
             curr = curr->next;
+
+            if (curr != nullptr) {
+                if (curr->el.y != x) {
+                    vector.push_back(currentSum);
+                    x++;
+                    isFirst = true;
+                    currentDigitSum = 0;
+                    currentSum = 0;
+                }
+            } else {
+                vector.push_back(currentSum);
+            }
         }
 
-        std::cout << "Output vector:\n";
+        std::cout << "\nOutput vector:\n";
         for (int &i : vector) {
             std::cout << i << " ";
         }
 
-    }
-
-    WrongIndexException::WrongIndexException(int x, int y) {
-        std::cout << "There are wrong indices: (" << x << "," << y << ")\n";
     }
 }

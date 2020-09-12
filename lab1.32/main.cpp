@@ -7,7 +7,6 @@ int main() {
     Matrix matrix = Matrix();
     matrix = input();
     std::cout<<matrix;
-
     matrix.Matrix::createVector();
 
     return 0;

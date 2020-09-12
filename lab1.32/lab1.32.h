@@ -22,19 +22,19 @@ namespace lab1 {
         friend std::ostream &operator<<(std::ostream &, Matrix &);
     };
 
-    class RowElement {
+    class ListElement {
     private:
         Element el;
-        RowElement *next;
+        ListElement *next;
 
     public:
-        RowElement(int x, int y, int value) : el(x, y, value) {
+        ListElement(int x, int y, int value) : el(x, y, value) {
             next = nullptr;
         };
 
         friend std::ostream &operator<<(std::ostream &, Matrix &);
 
-        friend std::ostream &operator<<(std::ostream &, RowElement &);
+        friend std::ostream &operator<<(std::ostream &, ListElement &);
 
         friend class Matrix;
     };
@@ -42,7 +42,7 @@ namespace lab1 {
     class Matrix {
     private:
         int count;
-        RowElement *head;
+        ListElement *head;
         int rows, columns;
 
     public:
@@ -55,7 +55,7 @@ namespace lab1 {
 
         Matrix();
 
-        void addElement(int y, int x, int value);
+        void addElement(int x, int y, int value);
 
     };
 
@@ -64,10 +64,13 @@ namespace lab1 {
         WrongIndexException(int, int);
     };
 
+    int getNaturalInt(int *a, const int *upperBound, bool withZero);
 
-    int getNaturalIntWithUpperBound(int *a, const int *upperBound);
+    int getNaturalInt(int *a, const int *upperBound);
 
     int getNaturalInt(int *a);
+
+    int getInt(int *a);
 
     int sumOfDigits(int n);
 

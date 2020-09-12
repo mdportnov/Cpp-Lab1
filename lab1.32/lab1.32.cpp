@@ -214,6 +214,7 @@ namespace lab1 {
                 out << std::endl;
                 j = 0;
             }
+
             // вывод нулей в качестве элементов в той же строке, но в предшествующих столбцах
             for (; i < current->el.x; i++) ////!!!
                 out << "0\t";
@@ -230,8 +231,8 @@ namespace lab1 {
             current = current->next;
         }
         // вывод нулей в качестве последующих элементов строки, в которой расположен последний элемент списка
-        if (j != 0) {
-            for (; j < matrix.columns; j++)
+        if (i != 0) {
+            for (; i < matrix.columns; i++)
                 out << "0\t";
             out << std::endl;
             j++;

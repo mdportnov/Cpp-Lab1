@@ -39,9 +39,9 @@ namespace lab1 {
                 int x, y, value;
 
                 std::cout << "Type in X coord: [" << 0 << ";" << cols - 1 << "]\n";
-                getNaturalInt(&x, &cols, true);
+                getNaturalInt(&x, &cols);
                 std::cout << "Type in Y coord: [" << 0 << ";" << rows - 1 << "]\n";
-                getNaturalInt(&y, &rows, true);
+                getNaturalInt(&y, &rows);
                 std::cout << "Type in Value:\n";
                 getInt(&value);
 
@@ -70,32 +70,10 @@ namespace lab1 {
                 scanf("%*[^\n]");
             }
 
-            if (n == 0 || *a <= 0) {
-                printf("%s\n", "Error! Wrong type. Please, repeat your input: ");
-                scanf("%*[^\n]");
-            }
-
-        } while (n == 0 || *a < 0 || *a > *upperBound - 1);
-        return 1;
-    }
-
-    int getNaturalInt(int *a, const int *upperBound, bool withZero) {
-        int n;
-        do {
-            n = scanf("%d", a);
-            if (n < 0)
-                return 0;
-
-            if (*a > *upperBound - 1) {
-                printf("%s\n", "Error! You went beyond the boundaries. Please, repeat your input: ");
-                scanf("%*[^\n]");
-            }
-
             if (n == 0 || *a < 0) {
                 printf("%s\n", "Error! Wrong type. Please, repeat your input: ");
                 scanf("%*[^\n]");
             }
-
 
         } while (n == 0 || *a < 0 || *a > *upperBound - 1);
         return 1;
@@ -146,11 +124,9 @@ namespace lab1 {
     void Matrix::addElement(int i, int j, int v) {
         ListElement *current, *help, *prev;
         bool insert = false;
-        // проверка корректности позиции
-        // вставляемого элемента
+        // проверка корректности позиции вставляемого элемента
         if (i < rows && j < columns) {
-            // проверка, вставляется ли элемент
-            // на первое место
+            // проверка, вставляется ли элемент на первое место
             if (head == nullptr || j < head->el.y ||
                 (j == head->el.y && i < head->el.x)) {
                 // вставка элемента в начало списка
@@ -160,13 +136,18 @@ namespace lab1 {
                 count++;
                 return;
             }
+
+            if (head->el.x == i && head->el.y == j) {
+                head->el.value = v;
+                insert = true;
+            }
             // поиск позиции вставляемого элемента
             prev = head;
             current = head->next;
 
             // пропускаем элементы, находящиеся в СТРОКАХ с меньшим номером
             while (current != nullptr && j > current->el.y) {
-                current = current->next;//////
+                current = current->next;
                 prev = prev->next;
             }
 
@@ -208,20 +189,20 @@ namespace lab1 {
         ListElement *current = matrix.head;
         while (current != nullptr) {
             // вывод нулей в качестве элементов предшествующих строк
-            for (; i < current->el.x; i++) {
-                for (; j < matrix.columns; j++)
+            for (; j < current->el.y; j++) {
+                for (; i < matrix.rows; i++)
                     out << "0\t";
                 out << std::endl;
-                j = 0;
+                i = 0;
             }
 
             // вывод нулей в качестве элементов в той же строке, но в предшествующих столбцах
-            for (; i < current->el.x; i++) ////!!!
+            for (; i < current->el.x; i++)
                 out << "0\t";
             // вывод текущего элемента
             out << *current << "\t";
             // корректировка индексов для просмотра следующих элементов
-            i++; ////!!!
+            i++;
 
             if (i == matrix.rows) {
                 j++;
@@ -232,7 +213,7 @@ namespace lab1 {
         }
         // вывод нулей в качестве последующих элементов строки, в которой расположен последний элемент списка
         if (i != 0) {
-            for (; i < matrix.columns; i++)
+            for (; i < matrix.rows; i++)
                 out << "0\t";
             out << std::endl;
             j++;
@@ -249,42 +230,41 @@ namespace lab1 {
     void Matrix::createVector() {
         ListElement *curr = this->head;
         int currentSum = 0, currentDigitSum = 0;
-        int x = 0;
+        int y = curr->el.y;
 
-        std::vector<int> vector;
+        std::vector<int> vector(this->columns);
         bool isFirst = true;
 
         while (curr != nullptr) {
 
-            if (isFirst) {
+            if (isFirst) { // Если первый в строке, то взять сумму его цифр
                 currentDigitSum = sumOfDigits(curr->el.value);
                 isFirst = false;
             }
 
-            if (curr->el.y == x) {
+            if (curr->el.y == y) { // Суммируем элементы с одинаковыми суммами цифр
                 if (currentDigitSum == sumOfDigits(curr->el.value)) {
                     currentSum += curr->el.value;
                 }
             }
-            curr = curr->next;
 
+            curr = curr->next;
             if (curr != nullptr) {
-                if (curr->el.y != x) {
-                    vector.push_back(currentSum);
-                    x++;
+                if (curr->el.y != y) { // Если строка сменилась
+                    vector[y] = currentSum;
+                    y = curr->el.y;
                     isFirst = true;
                     currentDigitSum = 0;
                     currentSum = 0;
                 }
             } else {
-                vector.push_back(currentSum);
+                vector[y] = currentSum; // Случай для последнего элемента
             }
-        }
 
+        }
         std::cout << "\nOutput vector:\n";
         for (int &i : vector) {
             std::cout << i << " ";
         }
-
     }
 }

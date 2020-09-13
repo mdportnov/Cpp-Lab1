@@ -1,12 +1,25 @@
 3 3 Y 0 0 25 Y 1 0 16 Y 2 0 2 Y 0 1 31 Y 1 1 4 Y 2 1 22 Y 0 2 11 Y 1 2 0 Y 2 2 2 n
 
+// Full matrix (with zeros)
 4 5 Y 0 0 35 Y 1 0 8 Y 2 0 0 Y 3 0 0 Y 0 1 0 Y 1 1 0 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 3 0 Y 1 3 0 Y 2 3 0 Y 3 3 0 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
 
-4 5 Y 0 0 35 Y 1 0 8 Y 2 0 0 Y 3 0 0 Y 0 1 0 Y 1 1 0 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
+// Empty 3, 4 cells in 1 row, 1, 2 in 3 row, empty 4 row
+4 5 Y 0 0 35 Y 1 0 8 Y 2 1 23 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
 
-4 6 Y 0 0 35 Y 1 0 8 Y 2 0 0 Y 3 0 0 Y 0 1 0 Y 1 1 0 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 3 0 Y 1 3 0 Y 2 3 0 Y 3 3 0 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
+// Extended prev matrix
+4 7 Y 0 0 35 Y 1 0 8 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
 
-2 2 Y 1 0 2 Y 0 0 1 Y 1 1 4 Y 0 1 3 n
+// 3x4 without zero-values
+3 4 Y 0 0 22 Y 1 0 13 Y 0 1 31 Y 1 1 4 Y 2 1 1 Y 0 3 12 Y 2 3 2 n
+
+// Empty 1 row, 1,2 cells in 2 row
+4 5 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 3 0 Y 1 3 0 Y 2 3 0 Y 3 3 0 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 n
+4 9 Y 2 1 23 Y 3 1 0 Y 0 2 1 Y 1 2 2 Y 2 2 1 Y 3 2 1 Y 0 3 0 Y 1 3 0 Y 2 3 0 Y 3 3 0 Y 0 4 83 Y 1 4 44 Y 2 4 38 Y 3 4 0 Y 1 5 100 Y 1 8 200 n
+
+2 3 Y 1 0 2 Y 0 0 1 Y 1 2 4 Y 0 2 3 n
 
 3 2 Y 0 0 11 Y 1 0 2 Y 2 0 11 Y 0 1 3 Y 1 1 4 Y 2 1 12 n
 
+// Re-write
+1 1 Y 0 0 1 Y 0 0 2 n
+3 3 Y 0 0 1 Y 1 1 4 Y 0 0 5 Y 1 1 6 n

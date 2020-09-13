@@ -59,13 +59,6 @@ namespace lab1 {
 
     };
 
-    class WrongIndexException {
-    public:
-        WrongIndexException(int, int);
-    };
-
-    int getNaturalInt(int *a, const int *upperBound, bool withZero);
-
     int getNaturalInt(int *a, const int *upperBound);
 
     int getNaturalInt(int *a);
